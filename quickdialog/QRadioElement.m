@@ -1,13 +1,13 @@
-//                                
+//
 // Copyright 2011 ESCOZ Inc  - http://escoz.com
-// 
-// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this 
-// file except in compliance with the License. You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-// 
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
+// file except in compliance with the License. You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
 // Unless required by applicable law or agreed to in writing, software distributed under
-// the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF 
+// the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 // ANY KIND, either express or implied. See the License for the specific language governing
 // permissions and limitations under the License.
 //
@@ -27,11 +27,16 @@
     _sections = nil;
     _internalRadioItemsSection = [[QSection alloc] init];
     _parentSection = _internalRadioItemsSection;
-
+    
     [self addSection:_parentSection];
-
+    
     for (NSUInteger i=0; i< [_items count]; i++){
-        [_parentSection addElement:[[QRadioItemElement alloc] initWithIndex:i RadioElement:self]];
+        if ( !self.targetObject ){
+            [_parentSection addElement:[[QRadioItemElement alloc] initWithIndex:i RadioElement:self]];
+        } else {
+            [_parentSection addElement:[[QRadioItemElement alloc] initWithIndex:i keyPath:@"name" RadioElement:self]];
+            
+        }
     }
 }
 
@@ -46,9 +51,9 @@
 
 -(void)setSelectedValue:(NSObject *)aSelected {
     if ([aSelected isKindOfClass:[NSNumber class]]) {
-    _selected = [(NSNumber *)aSelected integerValue];
+        _selected = [(NSNumber *)aSelected integerValue];
     } else {
-    _selected = [_values indexOfObject:aSelected];
+        _selected = [_values indexOfObject:aSelected];
     }
 }
 
@@ -66,6 +71,16 @@
     return self;
 }
 
+-(QRadioElement*)initWithItems:(NSArray*)objectArray valueKeyPath:(NSString*)keyPath targetObject:(id)object relationshipKeyPath:(NSString*)relationshipKeyPath {
+    self = [super init];
+    self.targetObject = object;
+    self.targetKeypath = relationshipKeyPath;
+    self.keyPath = keyPath;
+    self.items = objectArray;
+    
+    return self;
+}
+
 
 -(void)setSelectedItem:(id)item {
     if (self.items==nil)
@@ -76,7 +91,7 @@
 -(id)selectedItem {
     if (self.items == nil || [self.items count]<self.selected)
         return nil;
-
+    
     return [self.items objectAtIndex:(NSUInteger) self.selected];
 }
 
@@ -92,27 +107,36 @@
 
 - (void)selected:(QuickDialogTableView *)tableView controller:(QuickDialogController *)controller indexPath:(NSIndexPath *)path {
     if (self.sections==nil)
-            return;
-
+        return;
+    
     [controller displayViewControllerForRoot:self];
 }
 
 
 - (UITableViewCell *)getCellForTableView:(QuickDialogTableView *)tableView controller:(QuickDialogController *)controller {
     QEntryTableViewCell *cell = (QEntryTableViewCell *) [super getCellForTableView:tableView controller:controller];
-
+    
     NSString *selectedValue = nil;
     if (_selected >= 0 && _selected <_items.count)
         selectedValue = [[_items objectAtIndex:(NSUInteger) _selected] description];
-
+    
     if (self.title == NULL){
-        cell.textField.text = selectedValue;
+        if ( !self.targetObject ){
+            cell.textField.text = selectedValue;
+        } else {
+            cell.textField.text = [[[self targetObject] valueForKey:self.targetKeypath] valueForKey:self.keyPath];
+        }
         cell.detailTextLabel.text = nil;
         cell.imageView.image = nil;
     } else {
         cell.textLabel.text = _title;
-        cell.textField.text = selectedValue;
+        if ( !self.targetObject ){
+            cell.textField.text = selectedValue;
+        } else {
+            cell.textField.text = [[[self targetObject] valueForKey:self.targetKeypath] valueForKey:self.keyPath];
+        }
         cell.imageView.image = nil;
+        
     }
     cell.textField.textAlignment = UITextAlignmentRight;
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -123,16 +147,20 @@
 
 -(void)setSelected:(NSInteger)aSelected {
     _selected = aSelected;
-
+    if ( self.targetObject){
+        // Select the element in the core data stack.
+        [self.targetObject setValue:[self.items objectAtIndex:aSelected] forKey:self.targetKeypath];
+    }
+    
 }
 
 - (void)fetchValueIntoObject:(id)obj {
-	if (_key==nil)	
+	if (_key==nil)
 		return;
-
+    
     if (_selected < 0 || _selected >= (_values != nil ? _values : _items).count)
         return;
-
+    
     if (_values==nil){
         [obj setValue:[NSNumber numberWithInt:_selected] forKey:_key];
     } else {

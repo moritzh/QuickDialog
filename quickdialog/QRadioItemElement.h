@@ -21,9 +21,14 @@
     NSUInteger _index;
     QRadioElement *_radioElement;
     QRadioSection *_radioSection;
+    
 }
 
+@property (nonatomic,copy) NSString* keyPath;
+
 - (QRadioItemElement *)initWithIndex:(NSUInteger)i1 RadioElement:(QRadioElement *)element;
+
+- (QRadioItemElement *)initWithIndex:(NSUInteger)i1 keyPath:(NSString*)keyPath RadioElement:(QRadioElement *)element;
 
 - (QRadioItemElement *)initWithIndex:(NSUInteger)integer RadioSection:(QRadioSection *)section;
 @end
