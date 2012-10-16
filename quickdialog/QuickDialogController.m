@@ -74,6 +74,7 @@
     self = [super init];
     if (self) {
         self.root = rootElement;
+        self.root.grouped = YES;
         self.resizeWhenKeyboardPresented =YES;
     }
     return self;
@@ -105,6 +106,10 @@
     if (_willDisappearCallback!=nil){
         _willDisappearCallback();
     }
+}
+
+-(UIModalPresentationStyle)modalPresentationStyle {
+    return UIModalPresentationFormSheet;
 }
 
 - (void)popToPreviousRootElementOnMainThread {
