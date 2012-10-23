@@ -27,6 +27,7 @@
 @property(nonatomic, strong) id targetObject;
 @property (nonatomic, copy) NSString* targetKeypath;
 @property (nonatomic,copy)NSString* keyPath;
+@property (nonatomic) BOOL allowsEmptySelection;
 
 
 - (QRadioElement *)initWithDict:(NSDictionary *)valuesDictionary selected:(int)selected title:(NSString *)title;
@@ -39,4 +40,5 @@
 - (QRadioElement *)initWithItems:(NSArray *)stringArray selected:(NSInteger)selected;
 - (QRadioElement *)initWithItems:(NSArray *)stringArray selected:(NSInteger)selected title:(NSString *)title;
 - (QRadioElement *)initWithItems:(NSArray *)objectArray valueKeyPath:(NSString *)keyPath targetObject:(id)object relationshipKeyPath:(NSString*)relationshipKeyPath;
+-(QRadioElement*)initWithItems:(NSArray*)objectArray valueKeyPath:(NSString*)keyPath targetObject:(id)object relationshipKeyPath:(NSString*)relationshipKeyPath allowsEmpty:(BOOL)empty;
 @end

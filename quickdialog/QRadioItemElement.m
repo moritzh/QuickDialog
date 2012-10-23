@@ -40,7 +40,11 @@
     _radioElement = element;
     _index = i1;
     self.keyPath = keyPath;
+    if ( _index != NSNotFound){
     _title = [[element.items objectAtIndex:_index] valueForKey:keyPath];
+    } else {
+        _title = @"";
+    }
     return self;
 }
 

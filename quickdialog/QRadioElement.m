@@ -34,9 +34,13 @@
         if ( !self.targetObject ){
             [_parentSection addElement:[[QRadioItemElement alloc] initWithIndex:i RadioElement:self]];
         } else {
-            [_parentSection addElement:[[QRadioItemElement alloc] initWithIndex:i keyPath:@"name" RadioElement:self]];
+            [_parentSection addElement:[[QRadioItemElement alloc] initWithIndex:i keyPath:self.keyPath RadioElement:self]];
             
         }
+    }
+    
+    if ( self.allowsEmptySelection ){
+        [_parentSection insertElement:[[QRadioItemElement alloc] initWithIndex:NSNotFound keyPath:self.keyPath RadioElement:self] atIndex:0];
     }
 }
 
@@ -72,11 +76,23 @@
 }
 
 -(QRadioElement*)initWithItems:(NSArray*)objectArray valueKeyPath:(NSString*)keyPath targetObject:(id)object relationshipKeyPath:(NSString*)relationshipKeyPath {
+    self = [self initWithItems:objectArray valueKeyPath:keyPath targetObject:object relationshipKeyPath:relationshipKeyPath allowsEmpty:NO];
+    
+    return self;
+}
+
+-(QRadioElement*)initWithItems:(NSArray*)objectArray valueKeyPath:(NSString*)keyPath targetObject:(id)object relationshipKeyPath:(NSString*)relationshipKeyPath allowsEmpty:(BOOL)empty {
     self = [super init];
+    self.allowsEmptySelection = empty;
     self.targetObject = object;
     self.targetKeypath = relationshipKeyPath;
     self.keyPath = keyPath;
     self.items = objectArray;
+    
+    NSInteger selection = [self.items indexOfObject:[self.targetObject valueForKey:self.targetKeypath]];
+    if ( selection != NSNotFound){
+        [self setSelected:selection];
+    }
     
     return self;
 }
@@ -117,8 +133,11 @@
     QEntryTableViewCell *cell = (QEntryTableViewCell *) [super getCellForTableView:tableView controller:controller];
     
     NSString *selectedValue = nil;
-    if (_selected >= 0 && _selected <_items.count)
+    if (_selected >= 0 && _selected <_items.count){
+
         selectedValue = [[_items objectAtIndex:(NSUInteger) _selected] description];
+
+    }
     
     if (self.title == NULL){
         if ( !self.targetObject ){
@@ -148,10 +167,17 @@
 -(void)setSelected:(NSInteger)aSelected {
     _selected = aSelected;
     if ( self.targetObject){
+        if ( aSelected == NSNotFound){
+            [self.targetObject setNilValueForKey:self.targetKeypath];
+        } else {
+            if ( self.allowsEmptySelection){
+                _selected = aSelected;
+            }
         // Select the element in the core data stack.
         [self.targetObject setValue:[self.items objectAtIndex:aSelected] forKey:self.targetKeypath];
+        self.textValue = [[[self targetObject] valueForKey:self.targetKeypath] valueForKey:self.keyPath];
+        }
     }
-    
 }
 
 - (void)fetchValueIntoObject:(id)obj {
