@@ -88,11 +88,10 @@
     self.targetKeypath = relationshipKeyPath;
     self.keyPath = keyPath;
     self.items = objectArray;
+    self.controllerName = @"QuickDialogController";
     
     NSInteger selection = [self.items indexOfObject:[self.targetObject valueForKey:self.targetKeypath]];
-    if ( selection != NSNotFound){
         [self setSelected:selection];
-    }
     
     return self;
 }
