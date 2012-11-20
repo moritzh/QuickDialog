@@ -132,7 +132,7 @@
 }
 
 - (void)displayViewController:(UIViewController *)newController {
-    if (self.navigationController != nil ){
+    if (self.navigationController != nil && ![newController isKindOfClass:[UINavigationController class]]){
         [self.navigationController pushViewController:newController animated:YES];
     } else {
         [self presentModalViewController:newController animated:YES];
@@ -151,7 +151,7 @@
 }
 
 
-- (void) resizeForKeyboard:(NSNotification*)aNotification {
+- (void)resizeForKeyboard:(NSNotification*)aNotification {
     if (!_viewOnScreen)
         return;
 
