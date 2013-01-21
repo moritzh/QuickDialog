@@ -46,7 +46,7 @@
     _valueColorEnabled = [UIColor colorWithRed:0.1653 green:0.2532 blue:0.4543 alpha:1.0000];
     _valueColorDisabled = [UIColor lightGrayColor];
     _valueFont = [UIFont systemFontOfSize:15];
-    _valueAlignment = NSTextAlignmentRight;
+    _valueAlignment = NSTextAlignmentLeft;
 }
 
 - (id)copyWithZone:(NSZone *)zone {
