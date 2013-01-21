@@ -30,7 +30,7 @@
 
 - (QMultilineElement *)initWithTitle:(NSString *)title value:(NSString *)text
 {
-    if ((self = [super initWithTitle:title value:nil])) {
+    if ((self = [super initWithTitle:title Value:nil])) {
         self.textValue = text;
         self.presentationMode = QPresentationModePopover;
     }

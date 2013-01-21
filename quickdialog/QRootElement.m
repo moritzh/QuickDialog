@@ -36,6 +36,7 @@
 
 - (QRootElement *)init {
     self = [super init];
+    self.grouped = YES;
     return self;
 
 }

@@ -12,10 +12,11 @@
 // permissions and limitations under the License.
 //
 #import "QLabelElement.h"
+#import <UIKit/UIKit.h>
 
 @protocol QuickDialogEntryElementDelegate;
 
-@interface QEntryElement : QLabelElement <UITextInputTraits> {
+@interface QEntryElement : QLabelElement <UITextInputTraits, UITextFieldDelegate> {
 
 @private
     NSString *_placeholder;

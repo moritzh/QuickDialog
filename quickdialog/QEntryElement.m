@@ -52,6 +52,36 @@
     return self;
 }
 
+-(BOOL)stringIsNumeric:(NSString*)string {
+
+        NSScanner *sc = [NSScanner scannerWithString: string];
+        // We can pass NULL because we don't actually need the value to test
+        // for if the string is numeric. This is allowable.
+        if ( [sc scanFloat:NULL] )
+        {
+            // Ensure nothing left in scanner so that "42foo" is not accepted.
+            // ("42" would be consumed by scanFloat above leaving "foo".)
+            return [sc isAtEnd];
+        }
+        // Couldn't even scan a float :(
+        return NO;
+    
+}
+
+-(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    if ( self.keyboardType == UIKeyboardTypeNumberPad){
+        NSCharacterSet* nonNumbers = [[NSCharacterSet characterSetWithCharactersInString:@"0123456789,"] invertedSet];
+        
+        NSRange r = [string rangeOfCharacterFromSet: nonNumbers];
+        return r.location == NSNotFound;
+    }
+    else {
+        return YES;
+    }
+    
+    
+}
+
 - (UITableViewCell *)getCellForTableView:(QuickDialogTableView *)tableView controller:(QuickDialogController *)controller {
 
     QEntryTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"QuickformEntryElement"];
@@ -65,6 +95,7 @@
     cell.textField.enabled = self.enabled;
     cell.textField.userInteractionEnabled = self.enabled;
     cell.textField.textAlignment = self.appearance.entryAlignment;
+    cell.textField.delegate = self;
     cell.imageView.image = self.image;
     [cell prepareForElement:self inTableView:tableView];
     return cell;

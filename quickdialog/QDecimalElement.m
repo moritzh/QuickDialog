@@ -27,7 +27,7 @@
 
 
 - (QDecimalElement *)initWithTitle:(NSString *)title value:(float)value {
-    self = [super initWithTitle:title value:nil] ;
+    self = [super initWithTitle:title Value:nil] ;
     _floatValue = value;
     return self;
 }
