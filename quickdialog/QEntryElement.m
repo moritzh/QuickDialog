@@ -74,8 +74,12 @@
         
         NSRange r = [string rangeOfCharacterFromSet: nonNumbers];
         return r.location == NSNotFound;
-    }
-    else {
+    } else if ( self.keyboardType == UIKeyboardTypePhonePad){
+        NSCharacterSet* nonNumbers = [[NSCharacterSet characterSetWithCharactersInString:@"0123456789+() "] invertedSet];
+        
+        NSRange r = [string rangeOfCharacterFromSet: nonNumbers];
+        return r.location == NSNotFound;
+    } else {
         return YES;
     }
     
